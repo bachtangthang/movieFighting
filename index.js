@@ -1,7 +1,5 @@
-const root = document.querySelector('.autocomplete');//everything happen with autocomplete
-
 createAutoComplete({
-    root: document.querySelector('.autocomplete'),
+    root: document.querySelector('#left-autocomplete'),
     renderOption(movie) {
         const imgSrc = movie.Poster === 'N/A'? '':movie.Poster    
         return `
