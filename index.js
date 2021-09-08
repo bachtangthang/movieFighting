@@ -47,7 +47,7 @@ createAutoComplete({
 
 let leftMovie;
 let rightMovie;
-const onMovieSelect = async (movie, summaryElement) => {
+const onMovieSelect = async (movie, summaryElement, side) => {
     const response = await axios.get('http://www.omdbapi.com/', {
         params: {
             apikey: 'da4f2d33',
@@ -58,7 +58,7 @@ const onMovieSelect = async (movie, summaryElement) => {
 
     if(side === 'left'){
         leftMovie = response.data;
-    }else if(right === 'right'){
+    }else if(side === 'right'){
         rightMovie = response.data;
     }
 
@@ -68,7 +68,26 @@ const onMovieSelect = async (movie, summaryElement) => {
 }
 
 const runComparison = () =>{
+    const leftSideStats = document.querySelectorAll('#left-summary .notification');
+    const rightSideStats = document.querySelectorAll('#right-summary .notification');
+    console.log(leftSideStats);
+    console.log(rightSideStats)
+    leftSideStats.forEach((leftStat,index) =>{
+        const rightStat = rightSideStats[index];
 
+        const leftSideValue = leftStat.dataset.value;
+        const rightSideValue = rightStat.dataset.value;
+
+        if(rightSideValue > leftSideValue){
+            console.log('123');
+            leftStat.classList.remove('is-primary');
+            leftStat.classList.add('is-warning');
+        }else{
+            console.log('321');
+            rightStat.classList.remove('is-primary');
+            rightStat.classList.add('is-warning');
+        }
+    })
 }
 const movieTemplate = (movieDetail) =>{
     const dollars = parseInt(movieDetail.BoxOffice.replace(/\$/g, '').replace(/,/g, ''));
@@ -76,7 +95,7 @@ const movieTemplate = (movieDetail) =>{
     const imdbRating = parseFloat(movieDetail.imdbRating);
     const imdbVotes = parseInt(movieDetail.imdbVotes.replace(/,/g, ''));
     
-    const awards = movieDetail.Awards.split(' ').forEach((prev, word) => {
+    const awards = movieDetail.Awards.split(' ').reduce((prev, word) => {
         const value = parseInt(word);
         if(isNaN(value)){
             return prev;
@@ -100,23 +119,23 @@ const movieTemplate = (movieDetail) =>{
                 </div>
             </div>
         </article>
-        <article class = "notification is-primary">
+        <article data-value = ${awards} class = "notification is-primary">
             <p class = "title">${movieDetail.Awards}</p>
             <p class = "subtitle">Awards</p>
         </article>
-        <article class = "notification is-primary">
+        <article data-value = ${dollars} class = "notification is-primary">
             <p class = "title">${movieDetail.BoxOffice}</p>
             <p class = "subtitle">Box Office</p>
         </article>
-        <article class = "notification is-primary">
+        <article data-value = ${metascore} class = "notification is-primary">
             <p class = "title">${movieDetail.Metascore}</p>
             <p class = "subtitle">Metascore</p>
         </article>
-        <article class = "notification is-primary">
+        <article data-value = ${imdbRating} class = "notification is-primary">
             <p class = "title">${movieDetail.imdbRating}</p>
             <p class = "subtitle">IMDB Rating</p>
         </article>
-        <article class = "notification is-primary">
+        <article data-value = ${imdbVotes} class = "notification is-primary">
         <p class = "title">${movieDetail.imdbVotes}</p>
         <p class = "subtitle">IMDB Votes</p>
         </article>
